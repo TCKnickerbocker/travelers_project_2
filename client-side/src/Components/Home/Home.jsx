@@ -66,7 +66,7 @@ const Home = ({ charName }) => {
           Couldn’t find a star character called '{charName}'.
         </h1>
       )}
-      <div className="flex flex-wrap gap-6 max-w-10/12 mx-auto mt-4 mb-6">
+      <div className="flex flex-wrap gap-6 max-w-11/12 mx-auto mt-4 mb-6">
         {characters.map((char) => (
           <Character key={char._id} character={char}></Character>
         ))}
