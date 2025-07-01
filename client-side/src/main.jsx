@@ -1,17 +1,23 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import "./index.css";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import App from "./App.jsx";
-import { BrowserRouter as Router, Routes, Route } from "react-router";
 import CharacterDetails from "./components/CharacterDetails/CharacterDetails.jsx";
+import Films from "./components/Films/Films.jsx";
+import NotFound from "./Components/NotFound.jsx";
+import PlanetsPage from "./Components/Planets/PlanetsPage.jsx";
+import "./index.css";
 
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <Router>
-      <Routes>
-        <Route exact path="/" element={<App />} />
-        <Route path="/character/:id" element={<CharacterDetails />} />
-      </Routes>
-    </Router>
-  </StrictMode>
+	<StrictMode>
+		<Router>
+			<Routes>
+				<Route exact path="/" element={<App />} />
+				<Route path="/character/:id" element={<CharacterDetails />} />
+				<Route path="/film/:id" element={<Films />} />
+				<Route path="/planet/:id" element={<PlanetsPage />} />
+				<Route path="*" element={<NotFound />} />
+			</Routes>
+		</Router>
+	</StrictMode>
 );

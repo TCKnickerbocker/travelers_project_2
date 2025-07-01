@@ -1,26 +1,30 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
-const CharacterDetails = () => {
+const Films = () => {
 	let { id } = useParams();
 	const [isLoading, setIsLoading] = useState(true);
 	const [isError, setIsError] = useState(false);
 	const [errorMessage, setErrorMessage] = useState("");
-	const [characterData, setCharacterData] = useState({});
-	const [characterFilmsData, setCharacterFilmsData] = useState([]);
+	const [filmData, setFilmData] = useState({});
+	const [filmCharacterData, setFilmCharacterData] = useState([]);
+	const [filmPlanetsData, setFilmPlanetsData] = useState([]);
 
 	useEffect(() => {
 		id = parseInt(id);
 		if (isNaN(id)) {
 			setIsLoading(false);
 			setIsError(true);
-			setErrorMessage("Invalid character ID!");
+			setErrorMessage("Invalid film ID!");
 		} else {
-			const fetchedCharData = fetch(
-				`${import.meta.env.VITE_BASE_API_URL}/characters/${id}`
-			);
 			const fetchedFilmData = fetch(
-				`${import.meta.env.VITE_BASE_API_URL}/characters/${id}/films`
+				`${import.meta.env.VITE_BASE_API_URL}/films/${id}`
+			);
+			const fetchedCharData = fetch(
+				`${import.meta.env.VITE_BASE_API_URL}/films/${id}/characters`
+			);
+			const fetchedPlanetData = fetch(
+				`${import.meta.env.VITE_BASE_API_URL}/films/${id}/planets`
 			);
 			// setIsError(false);
 			const loadData = async () => {
@@ -28,16 +32,20 @@ const CharacterDetails = () => {
 					setIsLoading(true);
 					setIsError(false);
 					setErrorMessage("");
-					const [charDataRes, filmsDataRes] = await Promise.all([
-						fetchedCharData,
+					const [filmDataRes, charDataRes, planetDataRs] = await Promise.all([
 						fetchedFilmData,
+						fetchedCharData,
+						fetchedPlanetData,
 					]);
-					const [charData, filmsData] = await Promise.all([
+					const [data, charData, planetData] = await Promise.all([
+						filmDataRes.json(),
 						charDataRes.json(),
-						filmsDataRes.json(),
+						planetDataRs.json(),
 					]);
-					setCharacterData(charData);
-					setCharacterFilmsData(filmsData);
+					setFilmData(data);
+					setFilmCharacterData(charData);
+					setFilmPlanetsData(planetData);
+
 					setIsLoading(false);
 					setIsError(false);
 					setErrorMessage("");
@@ -90,39 +98,63 @@ const CharacterDetails = () => {
 			<div className="max-w-11/12 mx-auto py-15">
 				<div>
 					<h1 className="text-7xl text-white font-semibold">
-						{characterData.name}
+						{filmData?.title}
 					</h1>
+					<div className="card lg:card-side bg-yellow-300 shadow-sm mt-10 max-w-10/12 mx-auto py-5 px-2 border-2 border-gray-300">
+						<div className="card-body">
+							<p className="font-semibold text-xl text-blue-600">
+								{filmData?.opening_crawl}
+							</p>
+						</div>
+					</div>
 					<div className="flex justify-around my-20 text-2xl font-bold text-blue-600">
 						<h3 className="bg-yellow-300 border-2 border-gray-300 py-6 px-10 rounded-xl">
-							Height: {characterData.height} cm
+							Released: {filmData?.release_date}
 						</h3>
 						<h3 className="bg-yellow-300 border-2 border-gray-300 py-6 px-10 rounded-xl">
-							Mass: {characterData.mass} kg
+							Director: {filmData?.director}
 						</h3>
 						<h3 className="bg-yellow-300 border-2 border-gray-300 py-6 px-10 rounded-xl">
-							Height: {characterData.birth_year}
+							Episode: {filmData?.episode_id}
 						</h3>
 					</div>
 				</div>
-				<div>
-					<h1 className="text-6xl text-white font-semibold">Homeworld</h1>
-					<Link to={`/planet/${characterData?.homeworld}`}>
+				{/* <div>
+					<h1 className="text-6xl text-white font-semibold">
+						Appearing Characters
+					</h1>
+					<Link to={`/planet/${filmData?.homeworld}`}>
 						<div className="flex justify-start my-20 text-2xl font-bold text-blue-600">
 							<h3 className="bg-yellow-300 border-2 border-gray-300 py-6 px-10 rounded-xl ms-[172px]">
-								{characterData?.homeworldInfo?.name}
+								{filmData?.homeworldInfo?.name}
 							</h3>
 						</div>
 					</Link>
-				</div>
+				</div> */}
 				<div className="max-w-11/12">
 					<h1 className="text-6xl text-white font-semibold">
-						Films Appeared In
+						Appearing Characters
 					</h1>
 					<div className="grid grid-cols-2 md:grid-cols-3 gap-10 my-20 text-2xl font-bold text-blue-600 ms-[172px]">
-						{characterFilmsData.map((film) => (
-							<Link to={`/film/${film?.film_id}`} key={film._id}>
+						{filmCharacterData.map((character) => (
+							<Link
+								to={`/character/${character?.character_id}`}
+								key={character._id}
+							>
 								<h3 className="bg-yellow-300 border-2 border-gray-300 py-6 px-10 rounded-xl">
-									{film?.filmData?.title} cm
+									{character?.characterData?.name}
+								</h3>
+							</Link>
+						))}
+					</div>
+				</div>
+				<div className="max-w-11/12">
+					<h1 className="text-6xl text-white font-semibold">Planets</h1>
+					<div className="grid grid-cols-2 md:grid-cols-3 gap-10 my-20 text-2xl font-bold text-blue-600 ms-[172px]">
+						{filmPlanetsData.map((planet) => (
+							<Link to={`/planet/${planet?.planet_id}`} key={planet._id}>
+								<h3 className="bg-yellow-300 border-2 border-gray-300 py-6 px-10 rounded-xl">
+									{planet?.planetData?.name}
 								</h3>
 							</Link>
 						))}
@@ -133,4 +165,4 @@ const CharacterDetails = () => {
 	);
 };
 
-export default CharacterDetails;
+export default Films;
