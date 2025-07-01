@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
-function PlanetsPage() {
+const Films = () => {
   let { id } = useParams();
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [planetData, setPlanetData] = useState({});
-  const [planetCharacterData, setPlanetCharacterData] = useState([]);
-  const [planetFilmData, setPlanetFilmData] = useState([]);
+  const [filmData, setFilmData] = useState({});
+  const [filmCharacterData, setFilmCharacterData] = useState([]);
+  const [filmPlanetsData, setFilmPlanetsData] = useState([]);
 
   id = parseInt(id);
 
@@ -16,16 +16,16 @@ function PlanetsPage() {
     if (isNaN(id)) {
       setIsLoading(false);
       setIsError(true);
-      setErrorMessage("Invalid planet ID!");
+      setErrorMessage("Invalid film ID!");
     } else {
-      const fetchedPlanetData = fetch(
-        `${import.meta.env.VITE_BASE_API_URL}/planets/${id}`
+      const fetchedFilmData = fetch(
+        `${import.meta.env.VITE_BASE_API_URL}/films/${id}`
       );
       const fetchedCharData = fetch(
-        `${import.meta.env.VITE_BASE_API_URL}/planets/${id}/characters`
+        `${import.meta.env.VITE_BASE_API_URL}/films/${id}/characters`
       );
-      const fetchedFilmData = fetch(
-        `${import.meta.env.VITE_BASE_API_URL}/planets/${id}/films`
+      const fetchedPlanetData = fetch(
+        `${import.meta.env.VITE_BASE_API_URL}/films/${id}/planets`
       );
       // setIsError(false);
       const loadData = async () => {
@@ -33,19 +33,19 @@ function PlanetsPage() {
           setIsLoading(true);
           setIsError(false);
           setErrorMessage("");
-          const [planetDataRes, charDataRes, filmDataRs] = await Promise.all([
-            fetchedPlanetData,
-            fetchedCharData,
+          const [filmDataRes, charDataRes, planetDataRs] = await Promise.all([
             fetchedFilmData,
+            fetchedCharData,
+            fetchedPlanetData,
           ]);
-          const [data, charData, filmData] = await Promise.all([
-            planetDataRes.json(),
+          const [data, charData, planetData] = await Promise.all([
+            filmDataRes.json(),
             charDataRes.json(),
-            filmDataRs.json(),
+            planetDataRs.json(),
           ]);
-          setPlanetData(data);
-          setPlanetCharacterData(charData);
-          setPlanetFilmData(filmData);
+          setFilmData(data);
+          setFilmCharacterData(charData);
+          setFilmPlanetsData(planetData);
 
           setIsLoading(false);
           setIsError(false);
@@ -58,12 +58,6 @@ function PlanetsPage() {
         }
       };
       loadData();
-    }
-
-    if (!isLoading) {
-      console.log(planetData);
-      console.log(planetCharacterData);
-      console.log(planetFilmData);
     }
   }, []);
 
@@ -105,32 +99,44 @@ function PlanetsPage() {
       <div className="max-w-11/12 mx-auto py-15">
         <div>
           <h1 className="text-7xl text-white font-semibold">
-            {planetData?.name}
+            {filmData?.title}
           </h1>
-          <div className="flex justify-around my-20 text-2xl font-bold text-blue-600">
+          <div className="card lg:card-side bg-yellow-300 shadow-sm mt-10 max-w-10/12 mx-auto py-5 px-2 border-2 border-gray-300">
+            <div className="card-body">
+              <p className="font-semibold text-xl text-blue-600">
+                {filmData?.opening_crawl}
+              </p>
+            </div>
+          </div>
+          <div className="flex justify-around my-20 text-2xl font-bold text-blue-600 mx-10">
             <h3 className="bg-yellow-300 border-2 border-gray-300 py-6 px-10 rounded-xl">
-              Climate: {planetData?.climate}
+              Released: {filmData?.release_date}
             </h3>
             <h3 className="bg-yellow-300 border-2 border-gray-300 py-6 px-10 rounded-xl">
-              Diameter: {planetData?.diameter}
+              Director: {filmData?.director}
             </h3>
             <h3 className="bg-yellow-300 border-2 border-gray-300 py-6 px-10 rounded-xl">
-              Gravitiy: {planetData?.gravity}
+              Episode: {filmData?.episode_id}
             </h3>
           </div>
         </div>
         <div className="max-w-11/12">
-          <h1 className="text-6xl text-white font-semibold">Characters</h1>
-          {planetCharacterData.length === 0 ? (
+          <h1 className="text-6xl text-white font-semibold">
+            Appearing Characters
+          </h1>
+          {filmCharacterData.length === 0 ? (
             <h1 className="text-3xl text-center my-20 text-white font-bold">
-              No characters found for the planet {planetData?.name}
+              No characters found for the film {filmData?.title}
             </h1>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 gap-10 my-20 text-2xl font-bold text-blue-600 ms-[110px]">
-              {planetCharacterData.map((character) => (
-                <Link to={`/character/${character?.id}`} key={character._id}>
+              {filmCharacterData.map((character) => (
+                <Link
+                  to={`/character/${character?.character_id}`}
+                  key={character._id}
+                >
                   <h3 className="bg-yellow-300 border-2 border-gray-300 py-6 px-10 rounded-xl text-center">
-                    {character?.name}
+                    {character?.characterData?.name}
                   </h3>
                 </Link>
               ))}
@@ -138,17 +144,17 @@ function PlanetsPage() {
           )}
         </div>
         <div className="max-w-11/12">
-          <h1 className="text-6xl text-white font-semibold">Films</h1>
-          {planetFilmData.length === 0 ? (
+          <h1 className="text-6xl text-white font-semibold">Planets</h1>
+          {filmPlanetsData.length === 0 ? (
             <h1 className="text-3xl text-center my-20 text-white font-bold">
-              No films found for the planet {planetData?.name}
+              No planets found for the film {filmData?.title}
             </h1>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 gap-10 my-20 text-2xl font-bold text-blue-600 ms-[110px]">
-              {planetFilmData.map((film) => (
-                <Link to={`/film/${film?.film_id}`} key={film._id}>
+              {filmPlanetsData.map((planet) => (
+                <Link to={`/planet/${planet?.planet_id}`} key={planet._id}>
                   <h3 className="bg-yellow-300 border-2 border-gray-300 py-6 px-10 rounded-xl text-center">
-                    {film?.filmData?.title}
+                    {planet?.planetData?.name}
                   </h3>
                 </Link>
               ))}
@@ -158,6 +164,6 @@ function PlanetsPage() {
       </div>
     </>
   );
-}
+};
 
-export default PlanetsPage;
+export default Films;

@@ -1,13 +1,12 @@
 // Components/NotFound.jsx
-import React from "react";
+import pageNotFound from "../assets/page_not_found2.jpg";
 
 const NotFound = () => {
-  return (
-    <div>
-      <h1>404 - Page Not Found</h1>
-      <p>Sorry, the page you are looking for does not exist.</p>
-    </div>
-  );
+	return (
+		<div className="w-full h-screen">
+			<img src={pageNotFound} alt="page not found" className="w-full h-full" />
+		</div>
+	);
 };
 
 export default NotFound;
