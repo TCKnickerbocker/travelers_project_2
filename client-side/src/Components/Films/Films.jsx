@@ -94,6 +94,19 @@ const Films = () => {
       </div>
     );
   }
+  if (filmData === null) {
+    return (
+      <>
+        <div className="w-1/2 mx-auto">
+          <div role="alert" className="alert alert-error flex justify-center">
+            <span className="font-semibold text-xl text-white">
+              Invalid film ID.
+            </span>
+          </div>
+        </div>
+      </>
+    );
+  }
   return (
     <>
       <div className="max-w-11/12 mx-auto py-15">

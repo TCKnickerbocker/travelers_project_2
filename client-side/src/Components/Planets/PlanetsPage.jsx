@@ -67,6 +67,20 @@ function PlanetsPage() {
     }
   }, []);
 
+  if (planetData === null) {
+    return (
+      <>
+        <div className="w-1/2 mx-auto">
+          <div role="alert" className="alert alert-error flex justify-center">
+            <span className="font-semibold text-xl text-white">
+              Invalid planet ID.
+            </span>
+          </div>
+        </div>
+      </>
+    );
+  }
+
   if (isLoading) {
     return (
       <>

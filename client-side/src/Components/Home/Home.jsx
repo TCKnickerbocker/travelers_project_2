@@ -15,7 +15,6 @@ const Home = ({ charName }) => {
       .then((res) => res.json())
       .then((data) => {
         setCharacters(data);
-        console.log(data);
         setIsLoading(false);
         setIsError(false);
       })
