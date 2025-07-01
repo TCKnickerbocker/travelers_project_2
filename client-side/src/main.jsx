@@ -5,7 +5,7 @@ import App from "./App.jsx";
 import CharacterDetails from "./components/CharacterDetails/CharacterDetails.jsx";
 import Films from "./components/Films/Films.jsx";
 import NotFound from "./components/NotFound.jsx";
-import PlanetsPage from "./components/Planets/PlanetsPage.jsx";
+import PlanetsPage from "./Components/Planets/PlanetsPage.jsx";
 import "./index.css";
 
 createRoot(document.getElementById("root")).render(
