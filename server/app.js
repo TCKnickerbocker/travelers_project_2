@@ -23,7 +23,7 @@ app.get("/api/films", async (req, res) => {
 		console.error("Error fetching films:", error?.message);
 		res.status(500).json({ error: "Failed to fetch data. Try again later." });
 	} finally {
-		await client.close();
+		// await client.close();
 	}
 });
 
