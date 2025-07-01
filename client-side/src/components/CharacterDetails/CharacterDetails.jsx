@@ -118,15 +118,21 @@ const CharacterDetails = () => {
 					<h1 className="text-6xl text-white font-semibold">
 						Films Appeared In
 					</h1>
-					<div className="grid grid-cols-2 md:grid-cols-3 gap-10 my-20 text-2xl font-bold text-blue-600 ms-[172px]">
-						{characterFilmsData.map((film) => (
-							<Link to={`/film/${film?.film_id}`} key={film._id}>
-								<h3 className="bg-yellow-300 border-2 border-gray-300 py-6 px-10 rounded-xl">
-									{film?.filmData?.title} cm
-								</h3>
-							</Link>
-						))}
-					</div>
+					{characterFilmsData.length === 0 ? (
+						<h1 className="text-3xl text-center my-20 text-white font-bold">
+							No films found for the character {characterData.name}
+						</h1>
+					) : (
+						<div className="grid grid-cols-2 md:grid-cols-3 gap-10 my-20 text-2xl font-bold text-blue-600 ms-[172px]">
+							{characterFilmsData.map((film) => (
+								<Link to={`/film/${film?.film_id}`} key={film._id}>
+									<h3 className="bg-yellow-300 border-2 border-gray-300 py-6 px-10 rounded-xl text-center">
+										{film?.filmData?.title}
+									</h3>
+								</Link>
+							))}
+						</div>
+					)}
 				</div>
 			</div>
 		</>

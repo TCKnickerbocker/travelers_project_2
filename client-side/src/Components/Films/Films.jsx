@@ -119,46 +119,46 @@ const Films = () => {
 						</h3>
 					</div>
 				</div>
-				{/* <div>
-					<h1 className="text-6xl text-white font-semibold">
-						Appearing Characters
-					</h1>
-					<Link to={`/planet/${filmData?.homeworld}`}>
-						<div className="flex justify-start my-20 text-2xl font-bold text-blue-600">
-							<h3 className="bg-yellow-300 border-2 border-gray-300 py-6 px-10 rounded-xl ms-[172px]">
-								{filmData?.homeworldInfo?.name}
-							</h3>
-						</div>
-					</Link>
-				</div> */}
 				<div className="max-w-11/12">
 					<h1 className="text-6xl text-white font-semibold">
 						Appearing Characters
 					</h1>
-					<div className="grid grid-cols-2 md:grid-cols-3 gap-10 my-20 text-2xl font-bold text-blue-600 ms-[172px]">
-						{filmCharacterData.map((character) => (
-							<Link
-								to={`/character/${character?.character_id}`}
-								key={character._id}
-							>
-								<h3 className="bg-yellow-300 border-2 border-gray-300 py-6 px-10 rounded-xl">
-									{character?.characterData?.name}
-								</h3>
-							</Link>
-						))}
-					</div>
+					{filmCharacterData.length === 0 ? (
+						<h1 className="text-3xl text-center my-20 text-white font-bold">
+							No characters found for the film {filmData?.title}
+						</h1>
+					) : (
+						<div className="grid grid-cols-2 md:grid-cols-3 gap-10 my-20 text-2xl font-bold text-blue-600 ms-[172px]">
+							{filmCharacterData.map((character) => (
+								<Link
+									to={`/character/${character?.character_id}`}
+									key={character._id}
+								>
+									<h3 className="bg-yellow-300 border-2 border-gray-300 py-6 px-10 rounded-xl text-center">
+										{character?.characterData?.name}
+									</h3>
+								</Link>
+							))}
+						</div>
+					)}
 				</div>
 				<div className="max-w-11/12">
 					<h1 className="text-6xl text-white font-semibold">Planets</h1>
-					<div className="grid grid-cols-2 md:grid-cols-3 gap-10 my-20 text-2xl font-bold text-blue-600 ms-[172px]">
-						{filmPlanetsData.map((planet) => (
-							<Link to={`/planet/${planet?.planet_id}`} key={planet._id}>
-								<h3 className="bg-yellow-300 border-2 border-gray-300 py-6 px-10 rounded-xl">
-									{planet?.planetData?.name}
-								</h3>
-							</Link>
-						))}
-					</div>
+					{filmPlanetsData.length === 0 ? (
+						<h1 className="text-3xl text-center my-20 text-white font-bold">
+							No planets found for the film {filmData?.title}
+						</h1>
+					) : (
+						<div className="grid grid-cols-2 md:grid-cols-3 gap-10 my-20 text-2xl font-bold text-blue-600 ms-[172px]">
+							{filmPlanetsData.map((planet) => (
+								<Link to={`/planet/${planet?.planet_id}`} key={planet._id}>
+									<h3 className="bg-yellow-300 border-2 border-gray-300 py-6 px-10 rounded-xl text-center">
+										{planet?.planetData?.name}
+									</h3>
+								</Link>
+							))}
+						</div>
+					)}
 				</div>
 			</div>
 		</>
