@@ -1,7 +1,7 @@
-import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import { MongoClient, ObjectId } from "mongodb";
+import express from "express";
+import { MongoClient } from "mongodb";
 
 dotenv.config();
 
@@ -10,6 +10,7 @@ const port = process.env.PORT || 5000;
 
 app.use(express.json());
 app.use(cors());
+app.use(express.static('./public'));
 
 const client = new MongoClient(process.env.MONGO_DB_URI);
 
@@ -23,7 +24,7 @@ app.get("/api/films", async (req, res) => {
     console.error("Error fetching films:", error?.message);
     res.status(500).json({ error: "Failed to fetch data. Try again later." });
   } finally {
-    await client.close();
+    // await client.close();
   }
 });
 
@@ -38,7 +39,7 @@ app.get("/api/films/:id", async (req, res) => {
     console.error(`Error fetching film with id ${id}:`, error?.message);
     res.status(500).json({ error: "Failed to fetch data. Try again later." });
   } finally {
-    await client.close();
+    // await client.close();
   }
 });
 
@@ -82,7 +83,7 @@ app.get("/api/films/:id/characters", async (req, res) => {
     );
     res.status(500).json({ error: "Failed to fetch data. Try again later." });
   } finally {
-    await client.close();
+    // await client.close();
   }
 });
 
@@ -126,7 +127,7 @@ app.get("/api/films/:id/planets", async (req, res) => {
     );
     res.status(500).json({ error: "Failed to fetch data. Try again later." });
   } finally {
-    await client.close();
+    // await client.close();
   }
 });
 
@@ -138,16 +139,14 @@ app.get("/api/characters", async (req, res) => {
       .collection("characters");
 
     const characterName = req.query?.name;
-    const query = characterName
-      ? { name: { $regex: characterName, $options: "i" } }
-      : {};
+    const query = { name: { $regex: characterName ?? "", $options: "i" } };
     const characters = await charactersCollection.find(query).toArray();
     res.status(200).json(characters);
   } catch (error) {
     console.error("Error fetching characters:", error?.message);
     res.status(500).json({ error: "Failed to fetch data. Try again later." });
   } finally {
-    await client.close();
+    // await client.close();
   }
 });
 
@@ -159,8 +158,8 @@ app.get("/api/characters/:id", async (req, res) => {
       .collection("characters");
 
     const charId = parseInt(req.params?.id);
+
     // const character = await charactersCollection.findOne({ id });
-    console.log(charId);
     const character = await charactersCollection
       .aggregate([
         { $match: { id: charId } },
@@ -172,15 +171,19 @@ app.get("/api/characters/:id", async (req, res) => {
             as: "homeworldInfo",
           },
         },
+        { $unwind: "$homeworldInfo" },
       ])
       .toArray();
 
+    if (character.length === 0) {
+      return res.status(200).json(character);
+    }
     res.status(200).json(character[0]);
   } catch (error) {
     console.error(`Error fetching character with id ${id}:`, error?.message);
     res.status(500).json({ error: "Failed to fetch data. Try again later." });
   } finally {
-    await client.close();
+    // await client.close();
   }
 });
 
@@ -191,6 +194,7 @@ app.get("/api/characters/:id/films", async (req, res) => {
       .db("swapi")
       .collection("films-characters");
     const id = parseInt(req.params?.id);
+
     // const films = await character_filmsCollection
     //   .find({ character_id: id })
     //   .toArray();
@@ -216,6 +220,7 @@ app.get("/api/characters/:id/films", async (req, res) => {
         },
       ])
       .toArray();
+
     res.status(200).json(films);
   } catch (error) {
     console.error(
@@ -224,7 +229,7 @@ app.get("/api/characters/:id/films", async (req, res) => {
     );
     res.status(500).json({ error: "Failed to fetch data. Try again later." });
   } finally {
-    await client.close();
+    // await client.close();
   }
 });
 
@@ -238,7 +243,7 @@ app.get("/api/planets", async (req, res) => {
     console.error("Error fetching planets:", error?.message);
     res.status(500).json({ error: "Failed to fetch data. Try again later." });
   } finally {
-    await client.close();
+    // await client.close();
   }
 });
 
@@ -253,7 +258,7 @@ app.get("/api/planets/:id", async (req, res) => {
     console.error(`Error fetching planet with id ${id}:`, error?.message);
     res.status(500).json({ error: "Failed to fetch data. Try again later." });
   } finally {
-    await client.close();
+    // await client.close();
   }
 });
 
@@ -297,7 +302,7 @@ app.get("/api/planets/:id/films", async (req, res) => {
     );
     res.status(500).json({ error: "Failed to fetch data. Try again later." });
   } finally {
-    await client.close();
+    // await client.close();
   }
 });
 
@@ -321,7 +326,7 @@ app.get("/api/planets/:id/characters", async (req, res) => {
     );
     res.status(500).json({ error: "Failed to fetch data. Try again later." });
   } finally {
-    await client.close();
+    // await client.close();
   }
 });
 
