@@ -15,7 +15,7 @@ function PlanetsPage() {
 		if (isNaN(id)) {
 			setIsLoading(false);
 			setIsError(true);
-			setErrorMessage("Invalid film ID!");
+			setErrorMessage("Invalid planet ID!");
 		} else {
 			const fetchedPlanetData = fetch(
 				`${import.meta.env.VITE_BASE_API_URL}/planets/${id}`
